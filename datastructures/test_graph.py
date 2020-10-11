@@ -45,7 +45,7 @@ def test_graph1_creation():
 	assert np.array_equal(expect_G, G.csr.toarray())
 	if exists(dirpath):
 		shutil.rmtree(dirpath)
-		print 'Removed: %s' % dirpath
+		print('Removed: %s' % dirpath)
 
 def test_graph2_creation():
 	# shape of an example graph.
