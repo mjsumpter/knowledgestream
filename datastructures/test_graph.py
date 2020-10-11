@@ -171,14 +171,14 @@ def test_dbpedia():
 	T = Graph(adj, shape, sym=True)
 
 	# save graph
-	print 'Saving graph..'
+	print('Saving graph..')
 	t1 = time()
 	dirpath = join(dirname(adjpath), '_undir')
 	if not exists(dirpath):
 		os.makedirs(dirpath)
-		print '* Created: %s' % dirpath
+		print('* Created: %s' % dirpath)
 	T.save_graph(dirpath)
-	print 'Graph saved in {:.4f} secs at: {} '.format(time() - t1, dirpath)
+	print('Graph saved in {:.4f} secs at: {} '.format(time() - t1, dirpath))
 
 def test_dbpedia_loading():
 	adjpath = abspath(expanduser('~/Projects/truthy_data/dbpedia/2016-04/processed/kg/adjacency.npy'))
