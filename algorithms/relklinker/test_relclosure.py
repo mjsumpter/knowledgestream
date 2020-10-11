@@ -30,7 +30,7 @@ def test_graph1():
 	])
 	shape = (4, 4, 2)
 	G = make_graph(adj[:,:3], shape, values=adj[:,3], sym=sym, display=False)
-	print "Original graph:\n", G
+	print("Original graph:\n", G)
 
 	# set weights
 	indegsim = weighted_degree(G.indeg_vec, weight='degree').reshape((1, G.N))
@@ -73,9 +73,9 @@ def test_graph1():
 	]
 	results = []
 	itr = 0
-	for s in xrange(G.N):
-		for p in xrange(G.R):
-			for o in xrange(G.N):
+	for s in range(G.N):
+		for p in range(G.R):
+			for o in range(G.N):
 				if s == o:
 					continue
 				G.csr.data[targets == o] = 1
@@ -103,7 +103,7 @@ def test_graph2():
 	])
 	shape = (6, 6, 3)
 	G = make_graph(adj[:,:3], shape, values=adj[:,3], sym=sym, display=False)
-	print "Original graph:\n", G
+	print("Original graph:\n", G)
 
 	# set weights
 	indegsim = weighted_degree(G.indeg_vec, weight='degree').reshape((1, G.N))
@@ -212,9 +212,9 @@ def test_graph2():
 	]
 	results = []
 	itr = 0
-	for s in xrange(G.N):
-		for p in xrange(G.R):
-			for o in xrange(G.N):
+	for s in range(G.N):
+		for p in range(G.R):
+			for o in range(G.N):
 				if s == o:
 					continue
 				G.csr.data[targets == o] = 1

@@ -38,7 +38,7 @@ def katz(G, s, p, o, beta=0.05, k=3, linkpred=True):
 	if linkpred and G[s, o, p] != 0: 
 		G[s, o, p] = 0
 	score = 0.
-	for m in xrange(k + 1):
+	for m in range(k + 1):
 		if m == 0: # path of length 0 means nothing
 			continue
 		elif linkpred and m == 1: # no direct links allowed for link prediction
@@ -67,7 +67,7 @@ def get_paths(G, s, p, o, length=3):
 				discoverd_paths.append(path)
 			continue
 		relnbrs = G.get_neighbors(node)
-		for i in xrange(relnbrs.shape[1]):
+		for i in range(relnbrs.shape[1]):
 			rel, nbr = relnbrs[:, i]
 			path_stack.append(curr_path + [nbr])
 			relpath_stack.append(curr_relpath + [rel])

@@ -121,7 +121,7 @@ def succ_shortest_path(G, cost_vec, s, p, t, linkpred=True, return_flow=True, np
 		#	* Update cost matrix (NOTE: old actual cost is overwritten)
 		# 	* Update flow
 		pathlen = len(path) - 1
-		for i in xrange(pathlen):
+		for i in range(pathlen):
 			u, v, r = path[i], path[i+1], rpath[i+1] # edge: (u, v, r)
 			residual_cap = G.csr[u, N * r + v] # G[u, v, r]
 			if residual_cap - bnck >= 0:

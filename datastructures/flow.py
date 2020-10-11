@@ -38,13 +38,13 @@ class Flow(object):
 			annotation = '[{}] '.format(self.annotation)
 		if self.time is not None:
 			time = 'time: {:.3f}s'.format(self.time)
-		print '\n=> {}SPO: {} | Flow: {} | {} | {}'.format(
+		print('\n=> {}SPO: {} | Flow: {} | {} | {}'.format(
 			annotation, (self.source, self.predicate, self.target), 
 			self.flow, maxflow, time
-		)
+		))
 		for i, path in enumerate(self.paths):
-			print '  {}.'.format(i+1),
-			print path.pretty()
+			print('  {}.'.format(i+1), end=' ')
+			print(path.pretty())
 		return ""
 
 	def __repr__(self):

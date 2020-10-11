@@ -31,22 +31,22 @@ def test_graph1():
 	G.sources = np.repeat(np.arange(G.N), np.diff(G.csr.indptr))
 	G.targets = G.csr.indices % G.N
 	cost_vec = G.indeg_vec
-	print "Original graph:\n", G
+	print("Original graph:\n", G)
 
 	# Successive shortest path algorithm
 	s, p, o = 0, 1, 3
 	expect = 6.42857142857
 	mincostflow = succ_shortest_path(G, cost_vec, s, p, o)
-	print mincostflow
+	print(mincostflow)
 	assert np.allclose(mincostflow.flow, expect)
 
-	print 'Recovered max-flow edges (i, j, r, flow)..'
+	print('Recovered max-flow edges (i, j, r, flow)..')
 	adj = np.zeros((len(mincostflow.edges), 4))
-	for i, (k, v) in enumerate(mincostflow.edges.iteritems()):
+	for i, (k, v) in enumerate(mincostflow.edges.items()):
 		adj[i, :] = np.array([k[0], k[1], k[2], v])
 	adj = adj[np.lexsort((adj[:,2], adj[:,1], adj[:,0])),:]
-	print adj
-	print ''
+	print(adj)
+	print('')
 
 def test_graph2():
 	sym = True
@@ -66,22 +66,22 @@ def test_graph2():
 	G.sources = np.repeat(np.arange(G.N), np.diff(G.csr.indptr))
 	G.targets = G.csr.indices % G.N
 	cost_vec = G.indeg_vec
-	print "Original graph:\n", G
+	print("Original graph:\n", G)
 
 	# Successive shortest path algorithm
 	s, p, o = 0, 2, 5
 	expect = 2.88888888889
 	mincostflow = succ_shortest_path(G, cost_vec, s, p, o)
-	print mincostflow
+	print(mincostflow)
 	assert np.allclose(mincostflow.flow, expect)
 
-	print 'Recovered max-flow edges (i, j, r, flow)..'
+	print('Recovered max-flow edges (i, j, r, flow)..')
 	adj = np.zeros((len(mincostflow.edges), 4))
-	for i, (k, v) in enumerate(mincostflow.edges.iteritems()):
+	for i, (k, v) in enumerate(mincostflow.edges.items()):
 		adj[i, :] = np.array([k[0], k[1], k[2], v])
 	adj = adj[np.lexsort((adj[:,2], adj[:,1], adj[:,0])),:]
-	print adj
-	print ''
+	print(adj)
+	print('')
 
 def test_dbpedia():
 	dirpath = abspath(expanduser('./data/kg/_undir/'))
@@ -91,7 +91,7 @@ def test_dbpedia():
 	
 	s, p, o = 2145431, 178, 459128 # Gravity, Alfonso Cuarón
 	mincostflow = succ_shortest_path(G, cost_vec, s, p, o)
-	print mincostflow
+	print(mincostflow)
 
 
 if __name__ == '__main__':

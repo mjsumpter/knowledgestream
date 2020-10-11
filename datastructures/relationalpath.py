@@ -39,11 +39,11 @@ class RelationalPath:
 			A dictionary of relation index and name pairs.
 		"""
 		terminal = ""
-		print "SPO: [ {} {} {}], Score: {}, Path ({}):".format(
+		print("SPO: [ {} {} {}], Score: {}, Path ({}):".format(
 			self.source, self.relation, self.target, 
 			round(self.score, ROUND_DIGITS), self.pathlen
-		),
-		for i in xrange(1 + self.pathlen):
+		), end=' ')
+		for i in range(1 + self.pathlen):
 			node = self.path[i]
 			
 			# print node

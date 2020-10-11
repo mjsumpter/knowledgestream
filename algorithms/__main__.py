@@ -17,7 +17,7 @@ from os.path import expanduser, abspath, isfile, isdir, basename, splitext, \
 	dirname, join, exists
 from time import time
 from datetime import date
-import cPickle as pkl
+import pickle as pkl
 
 from datastructures.rgraph import Graph, weighted_degree
 
@@ -40,11 +40,11 @@ from algorithms.linkpred.pref_attach import preferential_attachment
 # KG - DBpedia
 HOME = abspath(expanduser('~/Projects/knowledgestream/data/'))
 if not exists(HOME):
-	print 'Data directory not found: %s' % HOME
-	print 'Download data per instructions on:'
-	print '\thttps://github.com/shiralkarprashant/knowledgestream#data'
-	print 'and enter the directory path below.'
-	data_dir = raw_input('\nPlease enter data directory path: ')
+	print('Data directory not found: %s' % HOME)
+	print('Download data per instructions on:')
+	print('\thttps://github.com/shiralkarprashant/knowledgestream#data')
+	print('and enter the directory path below.')
+	data_dir = input('\nPlease enter data directory path: ')
 	if data_dir != '':
 		data_dir = abspath(expanduser(data_dir))
 	if not os.path.isdir(data_dir):
@@ -143,7 +143,7 @@ def compute_mincostflow(G, relsim, subs, preds, objs, flowfile):
 		for idx, (s, p, o) in enumerate(zip(subs, preds, objs)):
 			s, p, o = [int(x) for x in (s, p, o)]
 			ts = time()
-			print '{}. Working on {} .. '.format(idx+1, (s, p, o)),
+			print('{}. Working on {} .. '.format(idx+1, (s, p, o)), end=' ')
 			sys.stdout.flush()
 
 			# set weights
@@ -159,9 +159,9 @@ def compute_mincostflow(G, relsim, subs, preds, objs, flowfile):
 			ff.write(json.dumps(mcflow.stream) + '\n')
 			tend = time()
 			times.append(tend - ts)
-			print 'mincostflow: {:.5f}, #paths: {}, time: {:.2f}s.'.format(
+			print('mincostflow: {:.5f}, #paths: {}, time: {:.2f}s.'.format(
 				mcflow.flow, len(mcflow.stream['paths']), tend - ts
-			)
+			))
 
 			# reset state of the graph
 			np.copyto(G.csr.data, G_bak['data'])
@@ -207,7 +207,7 @@ def compute_relklinker(G, relsim, subs, preds, objs):
 
 	scores, paths, rpaths, times = [], [], [], []
 	for idx, (s, p, o) in enumerate(zip(subs, preds, objs)):
-		print '{}. Working on {}..'.format(idx+1, (s, p, o)),
+		print('{}. Working on {}..'.format(idx+1, (s, p, o)), end=' ')
 		ts = time()
 		# set relational weight
 		G.csr.data[targets == o] = 1 # no cost for target t => max. specificity.
@@ -217,7 +217,7 @@ def compute_relklinker(G, relsim, subs, preds, objs):
 
 		rp = relclosure(G, s, p, o, kind='metric', linkpred=True)
 		tend = time()
-		print 'time: {:.2f}s'.format(tend - ts)
+		print('time: {:.2f}s'.format(tend - ts))
 		times.append(tend - ts)
 		scores.append(rp.score)
 		paths.append(rp.path)
@@ -264,11 +264,11 @@ def compute_klinker(G, subs, preds, objs):
 	# compute closure
 	scores, paths, rpaths, times = [], [], [], []
 	for idx, (s, p, o) in enumerate(zip(subs, preds, objs)):
-		print '{}. Working on {}..'.format(idx+1, (s, p, o)),
+		print('{}. Working on {}..'.format(idx+1, (s, p, o)), end=' ')
 		ts = time()
 		rp = closure(G, s, p, o, kind='metric', linkpred=True)
 		tend = time()
-		print 'time: {:.2f}s'.format(tend - ts)
+		print('time: {:.2f}s'.format(tend - ts))
 		times.append(tend - ts)
 		scores.append(rp.score)
 		paths.append(rp.path)
@@ -319,12 +319,12 @@ def link_prediction(G, subs, preds, objs, selected_measure='katz'):
 	t1 = time()
 	scores, times = [], []
 	for idx, (s, p, o) in enumerate(zip(subs, preds, objs)):
-		print '{}. Working on {}..'.format(idx+1, (s, p, o)),
+		print('{}. Working on {}..'.format(idx+1, (s, p, o)), end=' ')
 		sys.stdout.flush()
 		ts = time()
 		score = measure(G, s, p, o, linkpred=True)
 		tend = time()
-		print 'score: {:.5f}, time: {:.2f}s'.format(score, tend - ts)
+		print('score: {:.5f}, time: {:.2f}s'.format(score, tend - ts))
 		times.append(tend - ts)
 		scores.append(score)
 
@@ -333,7 +333,7 @@ def link_prediction(G, subs, preds, objs, selected_measure='katz'):
 		G.csr.indices = indices.copy()
 		G.csr.indptr = indptr.copy()
 		sys.stdout.flush()
-	print ''
+	print('')
 	return scores, times
 
 
@@ -433,27 +433,27 @@ def main(args=None):
 		log.info('KL computation complete. Time taken: {:.2f} secs.\n'.format(time() - t1))
 	elif args.method == 'predpath': # PREDPATH
 		vec, model = predpath_train_model(G, spo_df) # train
-		print 'Time taken: {:.2f}s\n'.format(time() - t1)
+		print('Time taken: {:.2f}s\n'.format(time() - t1))
 		# save model
 		predictor = { 'dictvectorizer': vec, 'model': model }
 		try:
 			outpkl = join(args.outdir, 'out_predpath_{}_{}.pkl'.format(base, DATE))
 			with open(outpkl, 'wb') as g:
 				pkl.dump(predictor, g, protocol=pkl.HIGHEST_PROTOCOL)
-			print 'Saved: {}'.format(outpkl)
-		except IOError, e:
+			print('Saved: {}'.format(outpkl))
+		except IOError as e:
 			raise e
 	elif args.method == 'pra': # PRA
 		features, model = pra_train_model(G, spo_df)
-		print 'Time taken: {:.2f}s\n'.format(time() - t1)
+		print('Time taken: {:.2f}s\n'.format(time() - t1))
 		# save model
 		predictor = { 'features': features, 'model': model }
 		try:
 			outpkl = join(args.outdir, 'out_pra_{}_{}.pkl'.format(base, DATE))
 			with open(outpkl, 'wb') as g:
 				pkl.dump(predictor, g, protocol=pkl.HIGHEST_PROTOCOL)
-			print 'Saved: {}'.format(outpkl)
-		except IOError, e:
+			print('Saved: {}'.format(outpkl))
+		except IOError as e:
 			raise e
 	elif args.method in ('katz', 'pathent', 'simrank', 'adamic_adar', 'jaccard', 'degree_product'):
 		scores, times = link_prediction(G, subs, preds, objs, selected_measure=args.method)
@@ -463,8 +463,8 @@ def main(args=None):
 		spo_df = normalize(spo_df)
 		outcsv = join(args.outdir, 'out_{}_{}_{}.csv'.format(args.method, base, DATE))
 		spo_df.to_csv(outcsv, sep=',', header=True, index=False)
-		print '* Saved results: %s' % outcsv
-	print '\nDone!\n'
+		print('* Saved results: %s' % outcsv)
+	print('\nDone!\n')
 
 if __name__ == '__main__':
 	"""

@@ -77,7 +77,7 @@ def pathentropy(G, s, p, o, k=3, linkpred=True):
 	if linkpred and G[s, o, p] != 0: 
 		G[s, o, p] = 0
 	joint_ent = 0.
-	for m in xrange(k + 1):
+	for m in range(k + 1):
 		if m == 0: # path of length 0 means nothing
 			continue
 		elif linkpred and m == 1: # no direct links allowed for link prediction

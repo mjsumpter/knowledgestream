@@ -118,10 +118,10 @@ def get_relational_similarity(d_org, scheme='log-tf', return_idf=False):
 		An (r x r) matrix of pairwise similarity between relations.
 	"""
 	if scheme == 'log-tf':
-		print 'Using log-tf...'
+		print('Using log-tf...')
 		idf, tfidf_sim = tfidf_relational_similarity_scheme1(d_org)
 	elif scheme == 'max-tf':
-		print 'Using max-tf...'
+		print('Using max-tf...')
 		idf, tfidf_sim = tfidf_relational_similarity_scheme2(d_org)
 	if return_idf:
 		return idf, tfidf_sim
@@ -139,31 +139,31 @@ def top_similar_relations(d, relations, relidx=None, rel=None, top=10, display=T
 	if relidx is None and rel is None:
 		raise Exception('One of relidx and rel needs to be specified')
 	if rel is not None:
-		relidx = [k for k, v in relations.iteritems() if v == rel][0]
+		relidx = [k for k, v in relations.items() if v == rel][0]
 	top_sim_rels = np.argsort(d[relidx,:])[::-1][:top+1]
 	scores = [d[relidx, relid] for relid in top_sim_rels]
 	if display:
-		print '\n=> Relation: {} {}'.format(relidx, relations[relidx])
+		print('\n=> Relation: {} {}'.format(relidx, relations[relidx]))
 		for idx, (relid, sc) in enumerate(zip(top_sim_rels, scores)):
-			print '  {}.\t{} [{}] {}'.format(idx+1, relations[relid], 
+			print('  {}.\t{} [{}] {}'.format(idx+1, relations[relid], 
 				relid, round(sc, 4)
-			)
-		print ''
+			))
+		print('')
 	return scores, top_sim_rels
 
 def main(args):
 	# load co-occ counts
 	d_org = np.load(args.cooc)
-	print 'Cooc. mat: {}'.format(d_org.shape)
+	print('Cooc. mat: {}'.format(d_org.shape))
 
 	# relsim
 	idf, tfidf_sim = get_relational_similarity(d_org, scheme=SCHEME, return_idf=True)
 
 	# read relations
 	relations = pd.read_table(args.rels, sep=' ', header=None)
-	relations = dict(zip(relations[0].values, relations[1].values))
-	rels = [relations[i] for i in xrange(len(relations))]
-	print 'Relations: {}'.format(len(relations))
+	relations = dict(list(zip(relations[0].values, relations[1].values)))
+	rels = [relations[i] for i in range(len(relations))]
+	print('Relations: {}'.format(len(relations)))
 
 	if args.top is not None or args.r is not None:
 		if re.match(r'[0-9]+', args.r):
@@ -177,12 +177,12 @@ def main(args):
 		rel_sim_fname = '{}_{}_tfidf.npy'.format(_fname, SCHEME)
 		rel_sim_fname = join(dirname(args.cooc), rel_sim_fname)
 		if exists(rel_sim_fname):
-			print 'File already exists: %s' % rel_sim_fname
-			ans = raw_input('Overwrite? ')
+			print('File already exists: %s' % rel_sim_fname)
+			ans = input('Overwrite? ')
 			if ans == 'n':
 				sys.exit()
 		np.save(rel_sim_fname, tfidf_sim)
-		print 'Saved TFIDF-based rel. cooc: {}'.format(rel_sim_fname)
+		print('Saved TFIDF-based rel. cooc: {}'.format(rel_sim_fname))
 
 		# save IDF
 		idf_fname = join(dirname(args.cooc), '{}_idf.csv'.format(_fname))
@@ -193,7 +193,7 @@ def main(args):
 		idf_df['rank'] = np.arange(idf_df.shape[0]) + 1
 		idf_df['idf_norm'] = idf_df['idf']/float(idf_df['idf'].max())
 		idf_df.to_csv(idf_fname, sep=",", header=True, index=False)
-		print 'Saved IDF info: {}'.format(idf_fname)
+		print('Saved IDF info: {}'.format(idf_fname))
 
 if __name__ == '__main__':
 	"""
@@ -240,4 +240,4 @@ if __name__ == '__main__':
 	args.cooc = abspath(expanduser(args.cooc))
 	
 	main(args)
-	print '\nDone!\n'
+	print('\nDone!\n')

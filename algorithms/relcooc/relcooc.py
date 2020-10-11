@@ -40,7 +40,7 @@ def compute_cooccurrence(G, revG):
 	N, R = G.N, G.R
 	cooc_mat = np.zeros((R, R))
 	z = np.zeros(R, dtype=np.int)
-	for node in xrange(N):
+	for node in range(N):
 		invec = get_outgoing_relations(revG, node)
 		outvec = get_outgoing_relations(G, node)
 		if len(invec) == 0 or len(outvec) == 0:
@@ -102,11 +102,11 @@ if __name__ == '__main__':
 		raise Exception('Shape of multi-relational graph expected to be 3-tuple.')
 
 	# log input parameters
-	print '\n# INPUT:'
-	print 'Graph path: {}'.format(path)
-	print 'Graph type: {}'.format('undir' if undir else 'dir')
-	print 'Output file: {}'.format(outfname)
-	print ''
+	print('\n# INPUT:')
+	print('Graph path: {}'.format(path))
+	print('Graph type: {}'.format('undir' if undir else 'dir'))
+	print('Output file: {}'.format(outfname))
+	print('')
 
 	# read graph
 	t1 = time()
@@ -125,8 +125,8 @@ if __name__ == '__main__':
 	t1 = time()
 	# cooc_mat = compute_cooccurrence(G, revG)
 	cooc_mat = c_relcooc(G, revG)
-	print 'Rel. cooccurrence matrix created: {:.4f} secs.'.format(time() - t1)
+	print('Rel. cooccurrence matrix created: {:.4f} secs.'.format(time() - t1))
 	np.save(outfname, cooc_mat)
-	print 'Saved rel. cooccurrence matrix at: {}'.format(outfname)
+	print('Saved rel. cooccurrence matrix at: {}'.format(outfname))
 
-	print '\nDone!\n'
+	print('\nDone!\n')

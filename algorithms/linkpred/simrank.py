@@ -51,15 +51,15 @@ def simrank(G, s, p, o, c=0.8, T=50, R=1000, linkpred=True):
 	score = 0.
 	u = np.ones(R, dtype=_int) * s
 	v = np.ones(R, dtype=_int) * o
-	for t in xrange(T):
+	for t in range(T):
 		# print 'U: {}, V: {}'.format(u, v)
-		uu = dict(zip(*np.unique(u, return_counts=True)))
-		vv = dict(zip(*np.unique(v, return_counts=True)))
+		uu = dict(list(zip(*np.unique(u, return_counts=True))))
+		vv = dict(list(zip(*np.unique(v, return_counts=True))))
 		common_nbrs = set(uu.keys()) & set(vv.keys())
 		for w in common_nbrs:
 			score += (c ** t) * (1. - c) * uu[w] * vv[w] / float(R ** 2)
 		# print '[{}] Score: {}'.format(t+1, score)
-		for r in xrange(R):
+		for r in range(R):
 			nbrs = np.unique(G.get_neighbors(u[r])[1, :])
 			u[r] = choice(nbrs, size=1, replace=True)
 			nbrs = np.unique(G.get_neighbors(v[r])[1, :])

@@ -68,24 +68,24 @@ def train_model(G, triples, use_interpretable_features=False, cv=10):
 
 	# Remove all edges in G corresponding to predicate p.
 	pid = triples[0]['pid']
-	print '=> Removing predicate {} from KG.'.format(pid)
+	print('=> Removing predicate {} from KG.'.format(pid))
 	eraseedges_mask = ((G.csr.indices - (G.csr.indices % G.N)) / G.N) == pid
 	G.csr.data[eraseedges_mask] = 0 
-	print ''
+	print('')
 
 	# Path extraction
-	print '=> Path extraction..(this can take a while)'
+	print('=> Path extraction..(this can take a while)')
 	t1 = time()
 	features, pos_features, neg_features, measurements = extract_paths(G, triples, y)
-	print 'P: +:{}, -:{}, unique tot:{}'.format(len(pos_features), len(neg_features), len(features))
+	print('P: +:{}, -:{}, unique tot:{}'.format(len(pos_features), len(neg_features), len(features)))
 	vec = DictVectorizer()
 	X = vec.fit_transform(measurements)
 	n, m = X.shape
-	print 'Time taken: {:.2f}s'.format(time() - t1)
-	print ''
+	print('Time taken: {:.2f}s'.format(time() - t1))
+	print('')
 	
 	# Path selection
-	print '=> Path selection..'
+	print('=> Path selection..')
 	t1 = time()
 	pathselect = SelectKBest(mutual_info_classif, k=min(100, m))
 	X_select = pathselect.fit_transform(X, y)
@@ -97,15 +97,15 @@ def train_model(G, triples, use_interpretable_features=False, cv=10):
 			select_pos_features.add(feature)
 		if feature in neg_features:
 			select_neg_features.add(feature)
-	print 'D: +:{}, -:{}, tot:{}'.format(
+	print('D: +:{}, -:{}, tot:{}'.format(
 		len(select_pos_features), len(select_neg_features), X_select.shape[1]
-	)
-	print 'Time taken: {:.2f}s'.format(time() - t1)
-	print ''
+	))
+	print('Time taken: {:.2f}s'.format(time() - t1))
+	print('')
 
 	# Fact interpretation
 	if use_interpretable_features and len(select_neg_features) > 0:
-		print '=> Fact interpretation..'
+		print('=> Fact interpretation..')
 		t1 = time()
 		theta = 10
 		select_neg_idx = [i for i, f in enumerate(vec.get_feature_names()) if f in select_neg_features]
@@ -119,19 +119,19 @@ def train_model(G, triples, use_interpretable_features=False, cv=10):
 				select_neg_features.remove(f)
 		vec = vec.restrictidx(keepidx, indices=True)
 		X_select = X_select[:, keepidx]
-		print 'D*: +:{}, -:{}, tot:{}'.format(
+		print('D*: +:{}, -:{}, tot:{}'.format(
 			len(select_pos_features), len(select_neg_features), X_select.shape[1]
-		)
-		print 'Time taken: {:.2f}s'.format(time() - t1)
-		print ''
+		))
+		print('Time taken: {:.2f}s'.format(time() - t1))
+		print('')
  
 	# Model creation
-	print '=> Model building..'
+	print('=> Model building..')
 	t1 = time()
 	model = find_best_model(X_select, y, cv=cv)
-	print '#Features: {}, best-AUROC: {:.5f}'.format(X_select.shape[1], model['best_score'])
-	print 'Time taken: {:.2f}s'.format(time() - t1)
-	print ''
+	print('#Features: {}, best-AUROC: {:.5f}'.format(X_select.shape[1], model['best_score']))
+	print('Time taken: {:.2f}s'.format(time() - t1))
+	print('')
 
 	return vec, model
 
@@ -163,14 +163,14 @@ def predict(G, triples, vec, model):
 	triples = triples[['sid', 'pid', 'oid']].to_dict(orient='records')
 
 	# Path extraction
-	print '=> Path extraction.. (this can take a while)'
+	print('=> Path extraction.. (this can take a while)')
 	t1 = time()
 	features, pos_features, neg_features, measurements = extract_paths(G, triples, y)
-	print 'P: +:{}, -:{}, unique tot:{}'.format(len(pos_features), len(neg_features), len(features))
+	print('P: +:{}, -:{}, unique tot:{}'.format(len(pos_features), len(neg_features), len(features)))
 	X = vec.fit_transform(measurements)
 	pred = model['clf'].predict(X) # array
-	print 'Time taken: {:.2f}s'.format(time() - t1)
-	print ''
+	print('Time taken: {:.2f}s'.format(time() - t1))
+	print('')
 	return pred
 
 # ================ PATH EXTRACTION ================
@@ -212,7 +212,7 @@ def extract_paths(G, triples, y, length=3, features=None):
 
 		# extract paths for a triple
 		triple_feature = dict()
-		for m in xrange(length + 1):
+		for m in range(length + 1):
 			if m in [0, 1]: # paths of length 0 and 1 mean nothing
 				continue
 			paths = c_get_paths(G, sid, pid, oid, length=m, maxpaths=200) # cythonized
@@ -230,7 +230,7 @@ def extract_paths(G, triples, y, length=3, features=None):
 		measurements.append(triple_feature)
 		# print '(T:{}, F:{})'.format(idx+1, len(triple_feature))
 		sys.stdout.flush()
-	print ''
+	print('')
 	if return_features:
 		return features, pos_features, neg_features, measurements
 	return measurements
@@ -255,7 +255,7 @@ def get_paths(G, s, p, o, length=3):
 				discoverd_paths.append(path)
 			continue
 		relnbrs = G.get_neighbors(node)
-		for i in xrange(relnbrs.shape[1]):
+		for i in range(relnbrs.shape[1]):
 			rel, nbr = relnbrs[:, i]
 			path_stack.append(curr_path + [nbr])
 			relpath_stack.append(curr_relpath + [rel])

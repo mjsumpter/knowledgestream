@@ -66,42 +66,42 @@ def train_model(G, triples, maxfeatures=100, cv=10):
 
 	# Remove all edges in G corresponding to predicate p.
 	pid = triples[0]['pid']
-	print '=> Removing predicate {} from KG.'.format(pid)
+	print('=> Removing predicate {} from KG.'.format(pid))
 	eraseedges_mask = ((G.csr.indices - (G.csr.indices % G.N)) / G.N) == pid
 	G.csr.data[eraseedges_mask] = 0 
-	print ''
+	print('')
 
 	# Path extraction
-	print '=> Path extraction..'
+	print('=> Path extraction..')
 	t1 = time()
 	features = c_extract_paths(G, triples, maxpaths=200) # cythonized
-	print '\n#Features: {}'.format(len(features))
-	print 'Time taken: {:.2f}s'.format(time() - t1)
-	print ''
+	print('\n#Features: {}'.format(len(features)))
+	print('Time taken: {:.2f}s'.format(time() - t1))
+	print('')
 	
 	# Path selection
-	print '=> Path selection..'
+	print('=> Path selection..')
 	t1 = time()
-	features = sorted(features.iteritems(), key=lambda x: x[1], reverse=True)[:maxfeatures]
+	features = sorted(iter(features.items()), key=lambda x: x[1], reverse=True)[:maxfeatures]
 	features = [f for f, _ in features] # frequency ignored henceforth
-	print 'Selected {} features'.format(len(features))
-	print ''
+	print('Selected {} features'.format(len(features)))
+	print('')
 
 	# Feature matrix construction
-	print '=> Constructing feature matrix..'
+	print('=> Constructing feature matrix..')
 	t1 = time()
 	X = c_construct_feature_matrix(G, features, triples, maxwalks=1000)
-	print 'Time taken: {:.5f}s'.format(time() - t1)
-	print ''
+	print('Time taken: {:.5f}s'.format(time() - t1))
+	print('')
 	
  
 	# Model creation
-	print '=> Model building..'
+	print('=> Model building..')
 	t1 = time()
 	model = find_best_model(X, y, cv=cv)
-	print '#Features: {}, best-AUROC: {:.4f}'.format(X.shape[1], model['best_score'])
-	print 'Time taken: {:.2f}s'.format(time() - t1)
-	print ''
+	print('#Features: {}, best-AUROC: {:.4f}'.format(X.shape[1], model['best_score']))
+	print('Time taken: {:.2f}s'.format(time() - t1))
+	print('')
 	
 	# weights = model['clf'].named_steps['clf'].coef_
 	return features, model
@@ -134,12 +134,12 @@ def predict(G, features, model, triples):
 	triples = triples[['sid', 'pid', 'oid']].astype(np.int).to_dict(orient='records')
 
 	# Path extraction
-	print '=> Path extraction..'
+	print('=> Path extraction..')
 	t1 = time()
 	X = c_construct_feature_matrix(G, features, triples)
 	pred = model['clf'].predict(X) # array
-	print 'Time taken: {:.2f}s'.format(time() - t1)
-	print ''
+	print('Time taken: {:.2f}s'.format(time() - t1))
+	print('')
 	return pred
 
 # ================ FEATURE MATRIX CONSTRUCTION ================
@@ -184,12 +184,12 @@ def construct_feature_matrix(G, features, triples, maxwalks=1000):
 	mat = np.empty((len(triples), len(features)), dtype=np.float)
 	for idx, triple in enumerate(triples):
 		sid, pid, oid = triple['sid'], triple['pid'], triple['oid']
-		print 'Working on triple {}'.format(idx+1)
+		print('Working on triple {}'.format(idx+1))
 		t1 = time()
 		for pthidx, path in enumerate(features):
 			path = path[1:] # exclude -1 in front
 			cnt = 0
-			for walk in xrange(maxwalks):
+			for walk in range(maxwalks):
 				node = sid
 				for r in path:
 					relnbrs = G.get_neighbors(node, k=r)
@@ -202,7 +202,7 @@ def construct_feature_matrix(G, features, triples, maxwalks=1000):
 					cnt += 1
 			# print '\t{}. {}/{} for {}'.format(pthidx+1, cnt, maxwalks, path)
 			mat[idx, pthidx] = cnt / float(maxwalks)
-		print time() - t1
+		print(time() - t1)
 	return mat
 
 # ================ PATH EXTRACTION ================
@@ -230,10 +230,10 @@ def extract_paths(G, triples, length=3):
 	features = dict()
 	for idx, triple in enumerate(triples):
 		sid, pid, oid = triple['sid'], triple['pid'], triple['oid']
-		print 'Working on triple {}'.format(idx+1)
+		print('Working on triple {}'.format(idx+1))
 
 		# extract paths for a triple
-		for m in xrange(length + 1):
+		for m in range(length + 1):
 			if m in [0, 1]: # paths of length 0 and 1 mean nothing
 				continue
 			paths = c_get_paths(G, sid, pid, oid, length=m) # cythonized
@@ -262,7 +262,7 @@ def get_paths(G, s, p, o, length=3):
 				discoverd_paths.append(path)
 			continue
 		relnbrs = G.get_neighbors(node)
-		for i in xrange(relnbrs.shape[1]):
+		for i in range(relnbrs.shape[1]):
 			rel, nbr = relnbrs[:, i]
 			path_stack.append(curr_path + [nbr])
 			relpath_stack.append(curr_relpath + [rel])

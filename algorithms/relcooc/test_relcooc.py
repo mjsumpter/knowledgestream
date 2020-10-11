@@ -48,7 +48,7 @@ def test_graph1():
 	])
 	cooc_mat_sym = compute_cooccurrence(G, revG)
 	assert np.array_equal(expect_cooc_mat_sym, cooc_mat_sym)
-	print ''
+	print('')
 
 	# DIRECTED
 	G = make_graph(adj, shape, sym=False, display=False)
@@ -123,7 +123,7 @@ def test_graph2():
 	])
 	cooc_mat_sym = compute_cooccurrence(G, revG)
 	assert np.array_equal(expect_cooc_mat_sym, cooc_mat_sym)
-	print '\n', '=' * 25
+	print('\n', '=' * 25)
 
 	# DIRECTED cooccurrence matrix
 	expect_cooc_mat_asym = np.array([
