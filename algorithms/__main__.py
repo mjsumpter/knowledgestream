@@ -45,8 +45,8 @@ if not exists(HOME):
 	print('\thttps://github.com/shiralkarprashant/knowledgestream#data')
 	print('and enter the directory path below.')
 	data_dir = input('\nPlease enter data directory path: ')
-	if data_dir != '':
-		data_dir = abspath(expanduser(data_dir))
+	# if data_dir != '':
+	# 	data_dir = abspath(expanduser(data_dir))
 	if not os.path.isdir(data_dir):
 		raise Exception('Entered path "%s" not a directory.' % data_dir)
 	if not exists(data_dir):
@@ -138,8 +138,9 @@ def compute_mincostflow(G, relsim, subs, preds, objs, flowfile):
 	indegsim = weighted_degree(G.indeg_vec, weight=WTFN)
 	specificity_wt = indegsim[G.targets] # specificity
 	relations = (G.csr.indices - G.targets) / G.N
+	relations_int = relations.astype(int) # for indexing below
 	mincostflows, times = [], []
-	with open(flowfile, 'w', 0) as ff:
+	with open(flowfile, 'w') as ff:
 		for idx, (s, p, o) in enumerate(zip(subs, preds, objs)):
 			s, p, o = [int(x) for x in (s, p, o)]
 			ts = time()
@@ -148,7 +149,7 @@ def compute_mincostflow(G, relsim, subs, preds, objs, flowfile):
 
 			# set weights
 			relsimvec = np.array(relsim[p, :]) # specific to predicate p
-			relsim_wt = relsimvec[relations]
+			relsim_wt = relsimvec[relations_int]
 			G.csr.data = np.multiply(relsim_wt, specificity_wt)
 			
 			# compute
@@ -199,6 +200,7 @@ def compute_relklinker(G, relsim, subs, preds, objs):
 
 	# relation vector
 	relations = (G.csr.indices - targets) / G.N
+	relations_int = relations.astype(int)   # convert to int for indexing
 
 	# back up
 	data = G.csr.data.copy()
@@ -212,7 +214,7 @@ def compute_relklinker(G, relsim, subs, preds, objs):
 		# set relational weight
 		G.csr.data[targets == o] = 1 # no cost for target t => max. specificity.
 		relsimvec = relsim[p, :] # specific to predicate p
-		relsim_wt = relsimvec[relations] # graph weight
+		relsim_wt = relsimvec[relations_int] # graph weight
 		G.csr.data = np.multiply(relsim_wt, G.csr.data)
 
 		rp = relclosure(G, s, p, o, kind='metric', linkpred=True)
