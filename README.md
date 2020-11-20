@@ -102,7 +102,7 @@ and a CSV file is created at the specified output directory, which contains `sco
 
 ## Knowledge Linker (KL)
 
-```kstream -m relklinker -d datasets/sample.csv -o output/```
+```kstream -m klinker -d datasets/sample.csv -o output/```
 
 You should see output such as 
 
